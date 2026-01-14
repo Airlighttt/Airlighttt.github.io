@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroCare Medical Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwHx7w2Q2Y3qY7Y2qY7Y2qY7Y2qY7Y2qY7Y&callback=initMap" async defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f0ff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #1a3d7d 0%, #2a5caa 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .nav-container {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .menu-description {
+            text-align: center;
+            max-width: 900px;
+            margin-bottom: 40px;
+            color: #555;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        .menu-item {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8fafc;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 2px solid #eef2f7;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0);
+            border-radius: 16px;
+            transition: all 0.4s ease;
+            z-index: 1;
+        }
+        
+        .menu-item:hover::before {
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        
+        .menu-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #2a5caa;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+        
+        .menu-item:hover .menu-icon {
+            color: #1a3d7d;
+            transform: scale(1.1);
+        }
+        
+        .menu-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item:hover .menu-text {
+            color: #1a3d7d;
+        }
+        
+        .content-area {
+            padding: 40px;
+            color: #666;
+            font-size: 1.1rem;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            background-color: #f9fbfd;
+            margin: 20px 40px;
+            border-radius: 16px;
+            border: 1px solid #eef2f7;
+        }
+        
+        .content-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eef2f7;
+        }
+        
+        .content-icon {
+            font-size: 3rem;
+            color: #2a5caa;
+            margin-right: 20px;
+        }
+        
+        .content-title {
+            font-size: 2rem;
+            color: #1a3d7d;
+        }
+        
+        /* Profile Section Styles */
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .login-form, .patient-info {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            border: 1px solid #eef2f7;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #2a5caa;
+            box-shadow: 0 0 0 3px rgba(42, 92, 170, 0.1);
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #2a5caa;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1a3d7d;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: #f0f7ff;
+            color: #2a5caa;
+            border: 1px solid #c5e1ff;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e1f0ff;
+            transform: translateY(-2px);
+        }
+        
+        .patient-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .detail-card {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #2a5caa;
+        }
+        
+        .detail-card h4 {
+            color: #1a3d7d;
+            margin-bottom: 10px;
+        }
+        
+        /* Maps Section Styles */
+        .maps-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 12px;
+            margin-top: 20px;
+            border: 1px solid #eef2f7;
+        }
+        
+        .location-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .location-card {
+            background-color: #f0f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        /* AI Health Assistant Styles - Neurological Focus */
+        .ai-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .ai-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .ai-icon {
+            font-size: 2.5rem;
+            color: #2a5caa;
+            margin-right: 15px;
+        }
+        
+        .ai-title {
+            font-size: 1.8rem;
+            color: #1a3d7d;
+        }
+        
+        .ai-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 10px;
+            border-left: 4px solid #2a5caa;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f7;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .chat-message {
+            margin-bottom: 20px;
+            max-width: 80%;
+            padding: 15px;
+            border-radius: 12px;
+            line-height: 1.5;
+        }
+        
+        .ai-message {
+            background-color: #f0f7ff;
+            border-left: 4px solid #2a5caa;
+            align-self: flex-start;
+        }
+        
+        .user-message {
+            background-color: #e8f4ff;
+            border-left: 4px solid #1a3d7d;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .chat-input {
+            flex-grow: 1;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #2a5caa;
+            box-shadow: 0 0 0 3px rgba(42, 92, 170, 0.1);
+        }
+        
+        .chat-button {
+            background-color: #2a5caa;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .chat-button:hover {
+            background-color: #1a3d7d;
+            transform: translateY(-2px);
+        }
+        
+        .option-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .option-button {
+            background-color: #f0f7ff;
+            border: 1px solid #c5e1ff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .option-button:hover {
+            background-color: #e1f0ff;
+            transform: translateY(-2px);
+        }
+        
+        .neurological-summary {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f0f9ff;
+            border-radius: 12px;
+            border-left: 4px solid #2a5caa;
+        }
+        
+        .neurological-summary h3 {
+            color: #1a3d7d;
+            margin-bottom: 10px;
+        }
+        
+        .neurological-summary ul {
+            padding-left: 20px;
+        }
+        
+        .neurological-summary li {
+            margin-bottom: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            background-color: #f8fafc;
+        }
+        
+        .hint {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 10px;
+            color: #1a3d7d;
+            font-size: 1rem;
+            max-width: 700px;
+        }
+        
+        .logout-btn {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 1200px) {
+            .menu {
+                max-width: 800px;
+            }
+            
+            .menu-item {
+                width: 140px;
+                height: 140px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .menu {
+                gap: 15px;
+            }
+            
+            .menu-item {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .menu-icon {
+                font-size: 2rem;
+            }
+            
+            .menu-text {
+                font-size: 1.1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .content-area {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .chat-container {
+                max-height: 350px;
+            }
+            
+            #map {
+                height: 400px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .menu {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .menu-item {
+                width: 90%;
+                max-width: 250px;
+                height: 100px;
+                flex-direction: row;
+                justify-content: flex-start;
+                padding-left: 30px;
+                gap: 20px;
+            }
+            
+            .menu-icon {
+                margin-bottom: 0;
+                font-size: 2rem;
+            }
+            
+            .nav-container {
+                padding: 30px 20px;
+            }
+            
+            .chat-input-container {
+                flex-direction: column;
+            }
+            
+            .chat-button {
+                padding: 15px;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MedGuide</h1>
+            <p class="subtitle">Specialized in Neurological Disorders and Brain Health</p>
+        </header>
+        
+        <div class="nav-container">
+            <div class="menu-description">
+                <p>Specialized neurological care with AI symptom assessment.</p>
+            </div>
+            
+            <div class="menu">
+                <div class="menu-item" id="home">
+                    <i class="fas fa-home menu-icon"></i>
+                    <span class="menu-text">Home</span>
+                </div>
+                <div class="menu-item" id="profile">
+                    <i class="fas fa-user-circle menu-icon"></i>
+                    <span class="menu-text">Profile</span>
+                </div>
+                <div class="menu-item" id="doctors">
+                    <i class="fas fa-user-md menu-icon"></i>
+                    <span class="menu-text">Doctors</span>
+                </div>
+                <div class="menu-item" id="maps">
+                    <i class="fas fa-map-marker-alt menu-icon"></i>
+                    <span class="menu-text">Maps</span>
+                </div>
+                <div class="menu-item" id="about">
+                    <i class="fas fa-info-circle menu-icon"></i>
+                    <span class="menu-text">About</span>
+                </div>
+                <div class="menu-item" id="contact">
+                    <i class="fas fa-envelope menu-icon"></i>
+                    <span class="menu-text">Contact</span>
+                </div>
+            </div>
+            
+            <div class="hint">
+                <i class="fas fa-lightbulb"></i> This is not a professional diagnosis, we recommend that you consult a doctor.
+            </div>
+        </div>
+        
+        <div class="content-area" id="content-area">
+            <!-- Content will be dynamically loaded here -->
+        </div>
+        
+        <footer>
+            <p>MedGuide Medical Center &copy; 2023 | Specialized in Neurological Disorders</p>
+        </footer>
+    </div>
+
+    <script>
+        // Get all menu items
+        const menuItems = document.querySelectorAll('.menu-item');
+        const contentArea = document.getElementById('content-area');
+        
+        // Patient database (in a real app, this would be on a server)
+        let patientDatabase = [
+            { email: "patient@neurocare.com", password: "neuro123", name: "John Smith", age: 45, condition: "Migraine", lastVisit: "2023-10-15", doctor: "Dr. Sarah Johnson" },
+            { email: "demo@neurocare.com", password: "demo123", name: "Emma Wilson", age: 62, condition: "Parkinson's Disease", lastVisit: "2023-11-02", doctor: "Dr. Michael Chen" },
+            { email: "test@neurocare.com", password: "test123", name: "Robert Davis", age: 38, condition: "Epilepsy", lastVisit: "2023-09-20", doctor: "Dr. Lisa Thompson" }
+        ];
+        
+        // Track current user
+        let currentUser = null;
+        
+        // Content for each menu item
+        const contentData = {
+            home: {
+                title: "Neurological Health Assistant AI",
+                content: `
+                    <div class="ai-container">
+                        <div class="ai-header">
+                            <i class="fas fa-brain ai-icon"></i>
+                            <h2 class="ai-title">Neurological Symptom Assessment</h2>
+                        </div>
+                        
+                        <p class="ai-subtitle">This AI specializes in assessing neurological symptoms and head injuries. Please describe any neurological symptoms you're experiencing or answer the questions below.</p>
+                        
+                        <div class="chat-container" id="chat-container">
+                            <div class="chat-message ai-message">
+                                <p>Hello! I'm your specialized Neurological Health Assistant. I'm here to help assess symptoms related to neurological conditions and head injuries.</p>
+                                <p><strong>What neurological symptoms are you experiencing?</strong></p>
+                                <div class="option-buttons" id="initial-options">
+                                    <div class="option-button" data-response="I have persistent headaches">Headaches</div>
+                                    <div class="option-button" data-response="I'm experiencing dizziness or vertigo">Dizziness/Vertigo</div>
+                                    <div class="option-button" data-response="I have memory problems">Memory Issues</div>
+                                    <div class="option-button" data-response="I've had a recent head injury">Head Injury</div>
+                                    <div class="option-button" data-response="I'm experiencing numbness or tingling">Numbness/Tingling</div>
+                                    <div class="option-button" data-response="I have vision problems">Vision Changes</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chat-input" placeholder="Describe your neurological symptoms here...">
+                            <button class="chat-button" id="send-button">Send</button>
+                        </div>
+                        
+                        <div class="neurological-summary" id="neurological-summary" style="display: none;">
+                            <h3>Neurological Symptom Assessment</h3>
+                            <div id="summary-content">
+                                <!-- Neurological summary will appear here -->
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            profile: {
+                title: "Patient Profile",
+                content: `
+                    <div class="content-header">
+                        <i class="fas fa-user-circle content-icon"></i>
+                        <h2 class="content-title">Patient Profile</h2>
+                    </div>
+                    <div class="profile-container" id="profile-container">
+                        <!-- Content will be dynamically loaded based on login status -->
+                    </div>
+                `
+            },
+            doctors: {
+                title: "Neurological Specialists",
+                content: `
+                    <div class="content-header">
+                        <i class="fas fa-user-md content-icon"></i>
+                        <h2 class="content-title">Neurological Specialists</h2>
+                    </div>
+                    <div class="content-body">
+                        <p>Soon...</p>
+                    </div>
+                `
+            },
+            maps: {
+                title: "Our Locations",
+                content: `
+                    <div class="content-header">
+                        <i class="fas fa-map-marker-alt content-icon"></i>
+                        <h2 class="content-title">Our Locations</h2>
+                    </div>
+                    <div class="maps-container">
+                        <p>Find medical centers near you. We have multiple locations equipped with advanced equipment.</p>
+                        <p><strong>Example:</strong></p>
+                        <div id="map"></div>
+                        <div class="location-info">
+                            <div class="location-card">
+                                <h4>Main Neurology Center</h4>
+                                <p><i class="fas fa-map-pin"></i> 123 Neuro Street, Brain City, BC 12345</p>
+                                <p><i class="fas fa-phone"></i> (123) 456-7890</p>
+                                <p><i class="fas fa-clock"></i> Mon-Fri: 8:00 AM - 8:00 PM</p>
+                            </div>
+                            <div class="location-card">
+                                <h4>Neurotrauma & Emergency Center</h4>
+                                <p><i class="fas fa-map-pin"></i> 456 Head Injury Ave, Med City, MC 67890</p>
+                                <p><i class="fas fa-phone"></i> (123) 456-7891 (Emergency)</p>
+                                <p><i class="fas fa-clock"></i> 24/7 Emergency Services</p>
+                            </div>
+                            <div class="location-card">
+                                <h4>Pediatric Neurology Center</h4>
+                                <p><i class="fas fa-map-pin"></i> 789 Child Neuro Way, Pediatric City, PC 13579</p>
+                                <p><i class="fas fa-phone"></i> (123) 456-7892</p>
+                                <p><i class="fas fa-clock"></i> Mon-Sat: 9:00 AM - 6:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            about: {
+                title: "About MedGuide",
+                content: `
+                    <div class="content-header">
+                        <i class="fas fa-info-circle content-icon"></i>
+                        <h2 class="content-title">About MedGuide Medical Center</h2>
+                    </div>
+                    <div class="content-body">
+                        <p><strong>MedGuide</strong> is an educational, web-based platform designed to help young people aged 16–22 better understand neurological symptoms and head injuries. Through simple, scenario-based guidance, MedGuide explains what symptoms may indicate, when a situation may be dangerous, and what steps should be taken immediately. The platform does not provide medical diagnoses, but empowers users to make informed decisions and seek professional help when necessary. MedGuide aims to reduce delayed treatment, panic, and misinformation by providing clear, accessible, and age-appropriate health guidance.</p>
+                    </div>
+                `
+            },
+            contact: {
+                title: "Contact MedGuide",
+                content: `
+                    <div class="content-header">
+                        <i class="fas fa-envelope content-icon"></i>
+                        <h2 class="content-title">Contact MedGuide</h2>
+                    </div>
+                    <div class="content-body">
+                        <p>We're here to help with all your neurological health needs. Reach out to us through any of the following channels:</p>
+                        <p><strong>Example:</strong> (123) 456-7890</p>
+                        <p>For prescription refills, appointment scheduling, or medical records, please use our patient portal or call during business hours.</p>
+                    </div>
+                `
+            }
+        };
+        
+        // Initialize Google Maps
+        function initMap() {
+            const neuroCareCenter = { lat: 40.7128, lng: -74.0060 };
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: neuroCareCenter,
+                styles: [
+                    {
+                        featureType: "poi.medical",
+                        elementType: "labels.icon",
+                        stylers: [{ visibility: "on" }]
+                    }
+                ]
+            });
+            
+            // Add markers for locations
+            const locations = [
+                { position: { lat: 40.7128, lng: -74.0060 }, title: "Main Neurology Center" },
+                { position: { lat: 40.7282, lng: -74.0776 }, title: "Neurotrauma & Emergency Center" },
+                { position: { lat: 40.7589, lng: -73.9851 }, title: "Pediatric Neurology Center" }
+            ];
+            
+            locations.forEach(location => {
+                new google.maps.Marker({
+                    position: location.position,
+                    map: map,
+                    title: location.title,
+                    icon: {
+                        url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                    }
+                });
+            });
+        }
+        
+        // Neurological AI Health Assistant Logic
+        let conversationHistory = [];
+        let currentQuestionIndex = 0;
+        
+        const neuroQuestions = [
+            {
+                question: "How long have you been experiencing these neurological symptoms?",
+                options: ["Less than 24 hours", "1-3 days", "4-7 days", "More than a week", "Chronic (months or years)"]
+            },
+            {
+                question: "Have you experienced any head injury or trauma recently?",
+                options: ["Yes, within last 24 hours", "Yes, within last week", "Yes, within last month", "No recent head injury", "Not sure"]
+            },
+            {
+                question: "On a scale of 1-10, how severe are your symptoms?",
+                options: ["1-3 (Mild)", "4-6 (Moderate)", "7-8 (Severe)", "9-10 (Very severe, emergency)"]
+            },
+            {
+                question: "Are you experiencing any of these emergency symptoms: loss of consciousness, severe confusion, sudden vision loss, or difficulty speaking?",
+                options: ["Yes, loss of consciousness", "Yes, severe confusion", "Yes, vision problems", "Yes, speech difficulties", "No emergency symptoms"]
+            }
+        ];
+        
+        function addMessage(message, isUser = false) {
+            const chatContainer = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isUser ? 'user-message' : 'ai-message'}`;
+            messageDiv.innerHTML = `<p>${message}</p>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Store in conversation history
+            conversationHistory.push({
+                message,
+                isUser,
+                timestamp: new Date().toLocaleTimeString()
+            });
+        }
+        
+        function askNextNeuroQuestion() {
+            if (currentQuestionIndex < neuroQuestions.length) {
+                const question = neuroQuestions[currentQuestionIndex];
+                let message = `<p><strong>${question.question}</strong></p>`;
+                message += `<div class="option-buttons">`;
+                question.options.forEach(option => {
+                    message += `<div class="option-button" data-response="${option}">${option}</div>`;
+                });
+                message += `</div>`;
+                
+                addMessage(message);
+                currentQuestionIndex++;
+            } else {
+                // All questions answered - provide neurological summary
+                provideNeuroSummary();
+            }
+        }
+        
+        function provideNeuroSummary() {
+            const summaryDiv = document.getElementById('neurological-summary');
+            const summaryContent = document.getElementById('summary-content');
+            
+            let summary = `<p>Based on your neurological symptom assessment:</p>`;
+            summary += `<ul>`;
+            summary += `<li><strong>Assessment:</strong> Your symptoms suggest a possible neurological concern that requires professional evaluation.</li>`;
+            summary += `<li><strong>Recommendation:</strong> Schedule an appointment with one of our neurologists for comprehensive evaluation.</li>`;
+            summary += `<li><strong>Immediate action needed if:</strong> Symptoms worsen, or you experience seizures, severe headache with fever, or sudden weakness on one side of the body.</li>`;
+            summary += `<li><strong>Diagnostic tests that may be needed:</strong> Neurological examination, MRI of the brain, EEG, or CT scan depending on symptoms.</li>`;
+            summary += `</ul>`;
+            summary += `<p><strong>Emergency Warning Signs (Go to ER immediately):</strong></p>`;
+            summary += `<ul>`;
+            summary += `<li>Sudden severe headache (worst of your life)</li>`;
+            summary += `<li>Loss of consciousness or seizure</li>`;
+            summary += `<li>Sudden weakness or numbness on one side</li>`;
+            summary += `<li>Sudden confusion or difficulty speaking</li>`;
+            summary += `<li>Sudden vision changes or loss</li>`;
+            summary += `</ul>`;
+            summary += `<p><em>Note: This AI assessment is for informational purposes only and is not a substitute for professional neurological evaluation. Always consult with a qualified neurologist for proper diagnosis and treatment.</em></p>`;
+            
+            summaryContent.innerHTML = summary;
+            summaryDiv.style.display = 'block';
+            
+            addMessage("Thank you for completing the neurological symptom assessment. I've prepared a summary based on your responses. Please remember that I'm an AI assistant specialized in neurological symptoms but not a substitute for professional medical evaluation by a neurologist.");
+        }
+        
+        function handleUserResponse(response) {
+            addMessage(response, true);
+            
+            // After a brief delay, ask the next question
+            setTimeout(() => {
+                askNextNeuroQuestion();
+            }, 800);
+        }
+        
+        function initializeNeuroChat() {
+            // Clear previous conversation
+            conversationHistory = [];
+            currentQuestionIndex = 0;
+            
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.innerHTML = '';
+            
+            const summaryDiv = document.getElementById('neurological-summary');
+            summaryDiv.style.display = 'none';
+            
+            // Add initial AI message
+            addMessage("Hello! I'm your specialized Neurological Health Assistant. I'm here to help assess symptoms related to neurological conditions and head injuries.<p><strong>What neurological symptoms are you experiencing?</strong></p><div class='option-buttons'><div class='option-button' data-response='I have persistent headaches'>Headaches</div><div class='option-button' data-response='I'm experiencing dizziness or vertigo'>Dizziness/Vertigo</div><div class='option-button' data-response='I have memory problems'>Memory Issues</div><div class='option-button' data-response='I've had a recent head injury'>Head Injury</div><div class='option-button' data-response='I'm experiencing numbness or tingling'>Numbness/Tingling</div><div class='option-button' data-response='I have vision problems'>Vision Changes</div></div>");
+            
+            // Set up event listeners for option buttons (delegated)
+            chatContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('option-button')) {
+                    const response = e.target.getAttribute('data-response');
+                    handleUserResponse(response);
+                }
+            });
+            
+            // Set up send button
+            const sendButton = document.getElementById('send-button');
+            const chatInput = document.getElementById('chat-input');
+            
+            sendButton.addEventListener('click', function() {
+                const userMessage = chatInput.value.trim();
+                if (userMessage) {
+                    handleUserResponse(userMessage);
+                    chatInput.value = '';
+                }
+            });
+            
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const userMessage = chatInput.value.trim();
+                    if (userMessage) {
+                        handleUserResponse(userMessage);
+                        chatInput.value = '';
+                    }
+                }
+            });
+        }
+        
+        // Profile functionality
+        function loadProfileContent() {
+            const profileContainer = document.getElementById('profile-container');
+            
+            if (currentUser) {
+                // User is logged in - show patient information
+                profileContainer.innerHTML = `
+                    <div class="patient-info">
+                        <h3>Welcome, ${currentUser.name}</h3>
+                        <p>You are logged in with: ${currentUser.email}</p>
+                        
+                        <div class="patient-details">
+                            <div class="detail-card">
+                                <h4>Personal Information</h4>
+                                <p><strong>Name:</strong> ${currentUser.name}</p>
+                                <p><strong>Age:</strong> ${currentUser.age}</p>
+                                <p><strong>Primary Condition:</strong> ${currentUser.condition}</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>Medical Information</h4>
+                                <p><strong>Primary Neurologist:</strong> ${currentUser.doctor}</p>
+                                <p><strong>Last Visit:</strong> ${currentUser.lastVisit}</p>
+                                <p><strong>Patient Since:</strong> 2022</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>Upcoming Appointments</h4>
+                                <p><strong>Next Consultation:</strong> December 15, 2023</p>
+                                <p><strong>MRI Scan:</strong> December 20, 2023</p>
+                                <p><strong>Follow-up:</strong> January 10, 2024</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>Medical Documents</h4>
+                                <p>• Latest MRI Results</p>
+                                <p>• Prescription Records</p>
+                                <p>• Treatment Plan</p>
+                                <p>• Lab Test Results</p>
+                            </div>
+                        </div>
+                        
+                        <button class="logout-btn" id="logout-btn">Logout</button>
+                    </div>
+                `;
+                
+                // Add logout event listener
+                document.getElementById('logout-btn').addEventListener('click', function() {
+                    currentUser = null;
+                    loadProfileContent();
+                });
+            } else {
+                // User is not logged in - show login form
+                profileContainer.innerHTML = `
+                    <div class="login-form">
+                        <h3>Patient Login</h3>
+                        <p>Login to access your neurological health records and appointments.</p>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" placeholder="Enter your email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" placeholder="Enter your password">
+                        </div>
+                        
+                        <div class="form-buttons">
+                            <button class="btn btn-primary" id="login-btn">Login</button>
+                            <button class="btn btn-secondary" id="register-btn">Register New Patient</button>
+                        </div>
+                        
+                        <p style="margin-top: 20px; font-size: 0.9rem; color: #777;">
+                            <strong>Demo Credentials:</strong><br>
+                            Email: patient@neurocare.com | Password: neuro123<br>
+                            Email: demo@neurocare.com | Password: demo123<br>
+                            Email: test@neurocare.com | Password: test123
+                        </p>
+                    </div>
+                `;
+                
+                // Add login event listener
+                document.getElementById('login-btn').addEventListener('click', function() {
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    
+                    // Check credentials
+                    const user = patientDatabase.find(p => p.email === email && p.password === password);
+                    
+                    if (user) {
+                        currentUser = { ...user };
+                        loadProfileContent();
+                    } else {
+                        alert("Invalid email or password. Please try again or use the demo credentials.");
+                    }
+                });
+                
+                // Add register event listener
+                document.getElementById('register-btn').addEventListener('click', function() {
+                    alert("For security reasons, new patient registration must be completed in person at our clinic. Please visit our registration desk with valid ID and insurance information.");
+                });
+            }
+        }
+        
+        // Add event listeners to each menu item
+        menuItems.forEach(item => {
+            // Add mouseover effect
+            item.addEventListener('mouseover', function() {
+                // Add a more pronounced effect for the hovered item
+                this.style.zIndex = "10";
+            });
+            
+            // Remove effect when mouse leaves
+            item.addEventListener('mouseout', function() {
+                this.style.zIndex = "1";
+            });
+            
+            // Add click functionality to update content
+            item.addEventListener('click', function() {
+                const itemId = this.id;
+                const content = contentData[itemId];
+                
+                if (content) {
+                    // Update content area
+                    contentArea.innerHTML = content.content;
+                    
+                    // Initialize specific functionality based on section
+                    if (itemId === 'home') {
+                        // Small delay to ensure DOM is updated
+                        setTimeout(initializeNeuroChat, 100);
+                    } else if (itemId === 'profile') {
+                        // Load profile content
+                        loadProfileContent();
+                    } else if (itemId === 'maps') {
+                        // Initialize map
+                        setTimeout(initMap, 300);
+                    }
+                    
+                    // Add visual feedback for active item
+                    menuItems.forEach(menuItem => {
+                        menuItem.style.borderColor = '#eef2f7';
+                        menuItem.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.05)';
+                    });
+                    
+                    this.style.borderColor = '#2a5caa';
+                    this.style.boxShadow = '0 8px 20px rgba(42, 92, 170, 0.2)';
+                }
+            });
+        });
+        
+        // Initialize with home content
+        document.getElementById('home').click();
+    </script>
+</body>
+</html>
